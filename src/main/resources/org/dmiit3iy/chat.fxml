@@ -13,6 +13,6 @@
       <ListView fx:id="onLineUsersListView" layoutX="474.0" layoutY="35.0" prefHeight="276.0" prefWidth="86.0" />
       <Label layoutX="474.0" layoutY="14.0" text="On-line" />
       <Button layoutX="474.0" layoutY="350.0" mnemonicParsing="false" onAction="#getAllMsgButton" text="Get all messages" styleClass="primary"/>
-      <Label fx:id="loginLable" layoutX="229.0" layoutY="6.0" text="Label" />
+      <Label fx:id="loginLabel" layoutX="229.0" layoutY="6.0" text="Label" />
    </children>
 </AnchorPane>
