@@ -30,6 +30,7 @@ public class AuthorizationController {
             if (user != null) {
                 App.openWindow("chat.fxml", "Chat window", user);
                 App.closeWindow(actionEvent);
+
             } else {
                 App.showMessage("Mistake", "Incorrect login or password", Alert.AlertType.ERROR);
             }

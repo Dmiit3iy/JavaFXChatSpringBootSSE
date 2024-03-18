@@ -56,12 +56,14 @@ public class App extends Application {
     public static <T> Stage openWindow(String name, String title, T data) throws IOException {
         Stage stage = getStage(name, title, data);
         stage.show();
+
         return stage;
     }
 
     public static <T> Stage openWindowAndWait(String name, String title, T data) throws IOException {
         Stage stage = getStage(name, title, data);
         stage.showAndWait();
+
         return stage;
     }
 

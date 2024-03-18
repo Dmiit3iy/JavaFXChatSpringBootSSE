@@ -14,7 +14,7 @@ public interface UserService {
     @GET("{id}")
     Call<ResponseResult<User>> get(@Path("id") long id);
 
-    @GET("/online")
+    @GET("online")
     Call<ResponseResult<List<User>>> getOnline();
 
     @DELETE("{id}")

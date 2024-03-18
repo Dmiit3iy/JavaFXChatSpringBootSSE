@@ -9,6 +9,7 @@ module org.dmiit3iy {
     requires retrofit2.converter.jackson;
     requires java.prefs;
     requires com.fasterxml.jackson.datatype.jsr310;
+    requires okhttp.eventsource;
 
     opens org.dmiit3iy to javafx.fxml;
     opens org.dmiit3iy.сontroller to javafx.fxml;

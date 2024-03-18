@@ -15,6 +15,9 @@ public class Message {
     private String message;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH-mm-ss")
-    @NonNull
     private LocalDateTime localDateTime = LocalDateTime.now();
+
+
+    @ToString.Exclude
+    private User user;
 }
