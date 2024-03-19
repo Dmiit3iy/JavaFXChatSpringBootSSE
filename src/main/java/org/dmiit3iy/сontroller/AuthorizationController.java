@@ -2,9 +2,13 @@ package org.dmiit3iy.сontroller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.dmiit3iy.App;
 import org.dmiit3iy.model.User;
 import org.dmiit3iy.retrofit.UserRepository;
@@ -28,7 +32,17 @@ public class AuthorizationController {
         try {
             user = userRepository.get(login, password);
             if (user != null) {
-                App.openWindow("chat.fxml", "Chat window", user);
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/dmiit3iy/chat.fxml"));
+                Stage stage = new Stage(StageStyle.DECORATED);
+                stage.setScene(new Scene(loader.load()));
+
+                ControllerData<User> chatController = loader.getController();
+                chatController.initData(user);
+
+
+                stage.setOnCloseRequest(chatController.getCloseEventHandler());
+                stage.show();
+
                 App.closeWindow(actionEvent);
 
             } else {

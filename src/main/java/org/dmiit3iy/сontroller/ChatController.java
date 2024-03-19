@@ -4,20 +4,17 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.launchdarkly.eventsource.EventHandler;
+import com.launchdarkly.eventsource.EventSource;
+import com.launchdarkly.eventsource.MessageEvent;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import com.launchdarkly.eventsource.EventHandler;
-import com.launchdarkly.eventsource.EventSource;
-import com.launchdarkly.eventsource.MessageEvent;
-import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
-import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.dmiit3iy.dto.MsgEvent;
 import org.dmiit3iy.model.Message;
@@ -33,7 +30,6 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
 
 public class ChatController implements ControllerData<User> {
@@ -47,7 +43,7 @@ public class ChatController implements ControllerData<User> {
     public TextArea chatTextArea;
 
     public TextArea messageTextArea;
-    public ListView onLineUsersListView;
+    public ListView<String> onLineUsersListView;
     public Label loginLabel;
     private String message;
     private User user;
@@ -57,15 +53,15 @@ public class ChatController implements ControllerData<User> {
     @FXML
     public void initData(User user) {
         this.user = user;
+        chatTextArea.setEditable(false);
         loginLabel.setText(user.getLogin());
 
         executorService.execute(() -> {
             try {
                 while (true) {
                     System.out.println("Initialize event source");
-
                     String url = "http://localhost:8080/sse/chat/" + user.getId();
-                    String url2 = "http://localhost:8080/user/online";
+                    String url2 = "http://localhost:8080/sse/online/" + user.getId();
 
                     EventSource.Builder builder = new EventSource.Builder(new EventHandler() {
                         @Override
@@ -80,14 +76,12 @@ public class ChatController implements ControllerData<User> {
                         public void onMessage(String s, MessageEvent messageEvent) throws Exception {
 
                             Platform.runLater(() -> {
-                               System.out.println(messageEvent.getData());
-
+                                System.out.println(messageEvent.getData());
                                 try {
                                     MsgEvent msgEvent = objectMapper.readValue(messageEvent.getData(), new TypeReference<MsgEvent>() {
                                     });
                                     Message msg = msgEvent.getMessage();
-
-                                    chatTextArea.appendText("@ "+msg.getUser().getLogin());
+                                    chatTextArea.appendText("@ " + msg.getUser().getLogin());
                                     chatTextArea.appendText("\n");
                                     chatTextArea.appendText(msg.getLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
                                     chatTextArea.appendText("\n");
@@ -122,21 +116,16 @@ public class ChatController implements ControllerData<User> {
                         public void onMessage(String s, MessageEvent messageEvent) throws Exception {
 
                             Platform.runLater(() -> {
-                                System.out.println(messageEvent.getData());
 
-//                                try {
-//
-
-//                                    ArrayList<User> userArrayList = objectMapper.readValue(event.getMessage(), new TypeReference<ArrayList<User>>() {
-//                                    });
-//
-//                                    emittersList = (ArrayList<String>) userArrayList.stream().map(x -> x.getLogin()).collect(Collectors.toList());
-//
-//                                    ObservableList<String> userList = FXCollections.observableList(emittersList);
-//                                    onLineUsersListView.setItems(userList);
-//                                } catch (JsonProcessingException e) {
-//                                    throw new RuntimeException(e);
-//                                }
+                                try {
+                                    ArrayList<User> userArrayList = objectMapper.readValue(messageEvent.getData(), new TypeReference<ArrayList<User>>() {
+                                    });
+                                    ArrayList<String> emittersList = (ArrayList<String>) userArrayList.stream().map(x -> x.getLogin()).collect(Collectors.toList());
+                                    ObservableList<String> userList = FXCollections.observableList(emittersList);
+                                    onLineUsersListView.setItems(userList);
+                                } catch (JsonProcessingException e) {
+                                    throw new RuntimeException(e);
+                                }
                             });
                         }
 
@@ -163,8 +152,6 @@ public class ChatController implements ControllerData<User> {
             } catch (InterruptedException ignored) {
             }
         });
-
-
     }
 
     public void sendButton(ActionEvent actionEvent) throws IOException {
@@ -184,7 +171,7 @@ public class ChatController implements ControllerData<User> {
         });
         for (Message m : msgArrayList
         ) {
-            chatTextArea.appendText("@ "+m.getUser().getLogin());
+            chatTextArea.appendText("@ " + m.getUser().getLogin());
             chatTextArea.appendText("\n");
             chatTextArea.appendText(m.getLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
             chatTextArea.appendText("\n");
@@ -193,5 +180,9 @@ public class ChatController implements ControllerData<User> {
         }
     }
 
+    private javafx.event.EventHandler<WindowEvent> closeEventHandler = event -> executorService.shutdownNow();
 
+    public javafx.event.EventHandler<WindowEvent> getCloseEventHandler() {
+        return closeEventHandler;
+    }
 }

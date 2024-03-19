@@ -6,7 +6,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import okhttp3.OkHttpClient;
 import org.dmiit3iy.dto.ResponseResult;
 import org.dmiit3iy.model.Message;
-import org.dmiit3iy.model.User;
 import org.dmiit3iy.util.Constants;
 import retrofit2.Response;
 import retrofit2.Retrofit;

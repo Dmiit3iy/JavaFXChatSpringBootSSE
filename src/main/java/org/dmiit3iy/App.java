@@ -6,18 +6,14 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.dmiit3iy.сontroller.ControllerData;
-
-import java.io.File;
 import java.io.IOException;
 
 
-/**
- * JavaFX App
- */
+
+
 public class App extends Application {
 
 
@@ -27,7 +23,6 @@ public class App extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("authorization.fxml"));
 
         Scene scene = new Scene(fxmlLoader.load(), 750, 400);
-        //stage.setTitle("Open New Forms Demo");
         stage.setScene(scene);
         stage.show();
     }
@@ -39,26 +34,29 @@ public class App extends Application {
     public static <T> Stage getStage(String name, String title, T data) throws IOException {
         FXMLLoader loader = new FXMLLoader(App.class.getResource(name));
 
+
+
         Stage stage = new Stage(StageStyle.DECORATED);
+
         stage.setScene(
                 new Scene(loader.load())
         );
 
         stage.setTitle(title);
-
         if (data != null) {
-            ControllerData<T> controller = loader.getController();
+           ControllerData<T> controller = loader.getController();
             controller.initData(data);
         }
         return stage;
     }
 
     public static <T> Stage openWindow(String name, String title, T data) throws IOException {
+
         Stage stage = getStage(name, title, data);
         stage.show();
-
         return stage;
     }
+
 
     public static <T> Stage openWindowAndWait(String name, String title, T data) throws IOException {
         Stage stage = getStage(name, title, data);
@@ -81,15 +79,7 @@ public class App extends Application {
         alert.showAndWait();
     }
 
-    public static String getPath() {
-        DirectoryChooser directoryChooser = new DirectoryChooser();
-        File selectedDirectory = directoryChooser.showDialog(null);
-        if (selectedDirectory == null) {
-            showMessage("warning","choose a directory", Alert.AlertType.ERROR);
-            return null;
-        }
-        return selectedDirectory.getPath();
-    }
+
 
 
 }

@@ -2,7 +2,6 @@ package org.dmiit3iy.retrofit;
 
 import org.dmiit3iy.dto.ResponseResult;
 import org.dmiit3iy.model.Message;
-import org.dmiit3iy.model.User;
 import retrofit2.Call;
 import retrofit2.http.*;
 
@@ -17,6 +16,5 @@ public interface MessageService {
 
     @GET(".")
     Call<ResponseResult<List<Message>>> getAll();
-
 
 }
