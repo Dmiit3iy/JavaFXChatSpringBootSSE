@@ -32,17 +32,7 @@ public class AuthorizationController {
         try {
             user = userRepository.get(login, password);
             if (user != null) {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/dmiit3iy/chat.fxml"));
-                Stage stage = new Stage(StageStyle.DECORATED);
-                stage.setScene(new Scene(loader.load()));
-
-                ControllerData<User> chatController = loader.getController();
-                chatController.initData(user);
-
-
-                stage.setOnCloseRequest(chatController.getCloseEventHandler());
-                stage.show();
-
+                App.openWindow("chat.fxml", "chat", user, true);
                 App.closeWindow(actionEvent);
 
             } else {

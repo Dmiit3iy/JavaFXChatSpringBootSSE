@@ -32,7 +32,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-public class ChatController implements ControllerData<User> {
+public class ChatController implements ControllerData<User>, CloseEvent {
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -154,6 +154,13 @@ public class ChatController implements ControllerData<User> {
         });
     }
 
+    private javafx.event.EventHandler<WindowEvent> closeEventHandler = event -> executorService.shutdownNow();
+
+    @Override
+    public javafx.event.EventHandler<WindowEvent> getCloseEventHandler() {
+        return closeEventHandler;
+    }
+
     public void sendButton(ActionEvent actionEvent) throws IOException {
         message = messageTextArea.getText();
         messageRepository.post(String.valueOf(user.getId()), message);
@@ -180,9 +187,5 @@ public class ChatController implements ControllerData<User> {
         }
     }
 
-    private javafx.event.EventHandler<WindowEvent> closeEventHandler = event -> executorService.shutdownNow();
 
-    public javafx.event.EventHandler<WindowEvent> getCloseEventHandler() {
-        return closeEventHandler;
-    }
 }

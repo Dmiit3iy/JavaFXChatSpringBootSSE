@@ -8,10 +8,11 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.dmiit3iy.сontroller.ChatController;
+import org.dmiit3iy.сontroller.CloseEvent;
 import org.dmiit3iy.сontroller.ControllerData;
+
 import java.io.IOException;
-
-
 
 
 public class App extends Application {
@@ -35,6 +36,24 @@ public class App extends Application {
         FXMLLoader loader = new FXMLLoader(App.class.getResource(name));
 
 
+        Stage stage = new Stage(StageStyle.DECORATED);
+
+        stage.setScene(
+                new Scene(loader.load())
+        );
+
+        stage.setTitle(title);
+        if (data != null) {
+            ControllerData<T> controller = loader.getController();
+            controller.initData(data);
+
+        }
+        return stage;
+    }
+
+    public static <T> Stage getStage(String name, String title, T data, boolean isNeedClose) throws IOException {
+        FXMLLoader loader = new FXMLLoader(App.class.getResource(name));
+
 
         Stage stage = new Stage(StageStyle.DECORATED);
 
@@ -44,15 +63,28 @@ public class App extends Application {
 
         stage.setTitle(title);
         if (data != null) {
-           ControllerData<T> controller = loader.getController();
+            ControllerData<T> controller = loader.getController();
             controller.initData(data);
+        }
+
+        if (isNeedClose) {
+            CloseEvent closeEvent = loader.getController();
+            stage.setOnCloseRequest(closeEvent.getCloseEventHandler());
         }
         return stage;
     }
 
+
     public static <T> Stage openWindow(String name, String title, T data) throws IOException {
 
         Stage stage = getStage(name, title, data);
+        stage.show();
+        return stage;
+    }
+
+    public static <T> Stage openWindow(String name, String title, T data, boolean isNeed) throws IOException {
+
+        Stage stage = getStage(name, title, data, isNeed);
         stage.show();
         return stage;
     }
@@ -78,8 +110,6 @@ public class App extends Application {
         alert.setContentText(message);
         alert.showAndWait();
     }
-
-
 
 
 }
